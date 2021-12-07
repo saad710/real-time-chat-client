@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link, NavLink, useHistory } from 'react-router-dom'
 
 function App() {
 	const history = useHistory()
@@ -32,8 +32,12 @@ function App() {
 	}
 
 	return (
-		<div>
+		<div className = "register">
 			<h1>Register</h1>
+			Already Registered ? 
+		<NavLink to="/login">
+		   <button>Log in</button>
+		</NavLink>
 			<form onSubmit={registerUser}>
 				<input
 					value={username}

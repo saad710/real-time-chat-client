@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import jwt from 'jsonwebtoken'
 import { useHistory } from 'react-router-dom'
+import { LoginContext } from '../../context/LoginProvider'
 
 const Dashboard = () => {
 	const history = useHistory()
 	const [quote, setQuote] = useState('')
 	const [tempQuote, setTempQuote] = useState('')
+	const {userData,setUserData} = useContext(LoginContext)
+	console.log(userData)
 
 	async function populateQuote() {
 		const req = await fetch('http://localhost:8800/api/auth/me', {
@@ -18,6 +21,7 @@ const Dashboard = () => {
 		console.log(data)
 		if (data) {
 			setQuote(data.username)
+			setUserData(data)
 		} else {
 			alert(data.error)
 		}
@@ -36,28 +40,28 @@ const Dashboard = () => {
 		}
 	}, [])
 
-	async function updateQuote(event) {
-		event.preventDefault()
+	// async function updateQuote(event) {
+	// 	event.preventDefault()
 
-		const req = await fetch('http://localhost:8800/api/auth/me', {
-			method: 'POST',
-			headers: {
-				'x-access-token': localStorage.getItem('token'),
-			},
-			body: JSON.stringify({
-				quote: tempQuote,
-			}),
-		})
+	// 	const req = await fetch('http://localhost:8800/api/auth/me', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'x-access-token': localStorage.getItem('token'),
+	// 		},
+	// 		body: JSON.stringify({
+	// 			quote: tempQuote,
+	// 		}),
+	// 	})
 
-		const data = await req.json()
-		console.log(data)
-		if (data.status === 'ok') {
-			setQuote(tempQuote)
-			setTempQuote('')
-		} else {
-			alert(data.error)
-		}
-	}
+	// 	const data = await req.json()
+	// 	console.log(data)
+	// 	if (data.status === 'ok') {
+	// 		setQuote(tempQuote)
+	// 		setTempQuote('')
+	// 	} else {
+	// 		alert(data.error)
+	// 	}
+	// }
 
 	const handleLogout = () => {
 			localStorage.removeItem('token')
@@ -66,16 +70,7 @@ const Dashboard = () => {
 
 	return (
 		<div>
-			<h1>Your quote: {quote || 'No quote found'}</h1>
-			<form onSubmit={updateQuote}>
-				<input
-					type="text"
-					placeholder="Quote"
-					value={tempQuote}
-					onChange={(e) => setTempQuote(e.target.value)}
-				/>
-				<input type="submit" value="Update quote" />
-			</form>
+			<h1>This is Dashboard page</h1>
 			<button onClick={handleLogout}>Logout</button>
 		</div>
 	)
