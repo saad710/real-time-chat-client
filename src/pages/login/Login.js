@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { LoginContext } from '../../context/LoginProvider'
 
 function App() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const {setUserData} = useContext(LoginContext)
+
+
+	
 
 	async function loginUser(event) {
 		event.preventDefault()
@@ -22,9 +27,10 @@ function App() {
 		console.log(data)
 
 		if (data.auth === true) {
+		
 			localStorage.setItem('token', data.token)
 			alert('Login successful')
-			window.location.href = '/dashboard'
+			window.location.href = '/messenger'
 		} else {
 			alert('Please check your username and password')
 		}

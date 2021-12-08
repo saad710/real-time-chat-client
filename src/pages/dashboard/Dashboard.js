@@ -8,7 +8,7 @@ const Dashboard = () => {
 	const [quote, setQuote] = useState('')
 	const [tempQuote, setTempQuote] = useState('')
 	const {userData,setUserData} = useContext(LoginContext)
-	console.log(userData)
+
 
 	async function populateQuote() {
 		const req = await fetch('http://localhost:8800/api/auth/me', {
@@ -39,6 +39,8 @@ const Dashboard = () => {
 			}
 		}
 	}, [])
+
+	console.log(userData._id)
 
 	// async function updateQuote(event) {
 	// 	event.preventDefault()

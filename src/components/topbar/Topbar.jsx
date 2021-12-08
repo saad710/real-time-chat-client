@@ -4,13 +4,19 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 
 import { LoginContext } from "../../context/LoginProvider";
+import { useHistory } from 'react-router-dom'
 
 export default function Topbar() {
-  const { userData } = useContext(LoginContext);
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const history = useHistory()
+  // const { userData } = useContext(LoginContext);
+  // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    history.replace('/login')
+}
   return (
     <div className="topbarContainer">
-      <div className="topbarLeft">
+      {/* <div className="topbarLeft">
         <Link to="/" style={{ textDecoration: "none" }}>
           <span className="logo">Lamasocial</span>
         </Link>
@@ -54,7 +60,8 @@ export default function Topbar() {
             className="topbarImg"
           />
         </Link>
-      </div>
+      </div> */}
+      	<button onClick={handleLogout}>Logout</button>
     </div>
   );
 }

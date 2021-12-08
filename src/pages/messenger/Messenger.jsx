@@ -15,11 +15,13 @@ export default function Messenger() {
 
   const history = useHistory()
   const { userData,setUserData } = useContext(LoginContext);
-  console.log(userData._id)
+ 
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  console.log(messages)
   const [newMessage, setNewMessage] = useState("");
+  console.log(newMessage)
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socket = useRef();
@@ -56,14 +58,17 @@ export default function Messenger() {
 		}
 	}, [])
 
-  console.log(userData)
+  // console.log(userData._id)
   const scrollRef = useRef();
 
+ 
  
 
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
+    console.log(socket.current)
     socket.current.on("getMessage", (data) => {
+      console.log(data)
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
@@ -72,6 +77,8 @@ export default function Messenger() {
     });
   }, []);
   console.log(arrivalMessage)
+
+  console.log(socket)
 
   useEffect(() => {
     arrivalMessage &&
@@ -83,6 +90,7 @@ export default function Messenger() {
   useEffect(() => {
     socket.current.emit("addUser", userData._id);
     socket.current.on("getUsers", (users) => {
+      console.log(users)
       setOnlineUsers(
         userData?.followings?.filter((f) => users?.some((u) => u.userId === f))
       );
@@ -152,7 +160,7 @@ export default function Messenger() {
   return (
     <>
     {/* <h1>messenger page</h1> */}
-      {/* <Topbar /> */}
+      <Topbar />
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
