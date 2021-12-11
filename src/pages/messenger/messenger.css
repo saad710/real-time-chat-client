@@ -48,9 +48,10 @@
   width: 70px;
   height: 40px;
   border: none;
+  margin-bottom: 6.5vh;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #030e1f;
+  background-color: #ADD8E6;
   color: white;
 }
 

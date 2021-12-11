@@ -4,11 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import LoginProvider from './context/LoginProvider';
+import ChatListUserDataProvider  from './context/ChatListUserDataProvider';
+import AuthProvider from './context/AuthProvider';
 
 ReactDOM.render(
   <React.StrictMode>
    <LoginProvider>
-      <App />
+     <AuthProvider>
+          <App/>
+      </AuthProvider>
    </LoginProvider>
   </React.StrictMode>,
   document.getElementById('root')

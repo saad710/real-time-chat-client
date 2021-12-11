@@ -10,20 +10,30 @@ import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { LoginContext } from "../../context/LoginProvider";
+import { Avatar, Divider, IconButton, ListItem, ListItemAvatar, ListItemText, TextField, Typography, Grid } from "@mui/material";
+
+import { ChatUserContext } from "../../context/ChatListUserDataProvider";
+import FeatherIcon from "feather-icons-react";
+import Box from '@mui/material/Box';
 
 export default function Messenger() {
 
   const history = useHistory()
   const { userData,setUserData } = useContext(LoginContext);
+  const [onlineMatch,setOnlineMatch] = useState([])
+  const [findChatUser,setFindChatUser] = useState()
+  const [chatUserOnline,setChatUserOnline] = useState()
  
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
+  console.log(currentChat)
   const [messages, setMessages] = useState([]);
   console.log(messages)
   const [newMessage, setNewMessage] = useState("");
   console.log(newMessage)
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  
   const socket = useRef();
   
   
@@ -157,43 +167,184 @@ export default function Messenger() {
 
   console.log(conversations)
 
+  useEffect(() => {
+    const chatOnlineMatch = onlineMatch?.filter((f) => onlineUsers?.includes(f._id))
+    console.log(chatOnlineMatch)
+    const matchData = chatOnlineMatch?.filter(user => user.username === findChatUser)
+    console.log(matchData)
+    console.log(matchData.length === 0)
+    if(matchData.length === 0) {
+      setChatUserOnline(false)
+    }
+    else {
+      setChatUserOnline(true)
+    }
+  },[findChatUser,onlineUsers,onlineMatch])
+
+  const handleUserChat = (c) => {
+    console.log(c)
+    setCurrentChat(c)
+    const findCurrentChat = c.members.filter(userInfo => userInfo !== userData._id)
+    const findCurrentChatId = findCurrentChat.toString()
+    console.log(findCurrentChatId)
+    axios.get(`http://localhost:8800/api/users?userId=${findCurrentChatId}`)
+    .then((response) => {
+        const data = response.data
+        console.log(data)
+        setFindChatUser(data.username)
+      })
+    .catch((err) => {
+      console.log(err)
+   });
+   axios.get(`http://localhost:8800/api/users/friends/${userData._id}`)
+   .then((response) => {
+    const data = response.data
+    console.log(data)
+    setOnlineMatch(data)
+    // const chatOnlineMatch = data?.filter((f) => onlineUsers?.includes(f._id))
+    // console.log(chatOnlineMatch)
+    // const matchData = chatOnlineMatch?.filter(user => user.username === findChatUser)
+    // console.log(matchData)
+    // console.log(matchData.length === 0)
+    // if(matchData.length === 0) {
+    //   setChatUserOnline(false)
+    // }
+    // else {
+    //   setChatUserOnline(true)
+    // }
+  })
+.catch((err) => {
+  console.log(err)
+  })
+
+  }
+
+  console.log(chatUserOnline)
+ console.log(findChatUser)
+
   return (
     <>
     {/* <h1>messenger page</h1> */}
       <Topbar />
-      <div className="messenger">
+     <Box >
+     <div className="messenger">
         <div className="chatMenu">
+       
           <div className="chatMenuWrapper">
-            <input placeholder="Search for friends" className="chatMenuInput" />
-            {conversations.map((c) => (
-              <div onClick={() => setCurrentChat(c)}>
+  
+            {/* <input placeholder="Search for friends" className="chatMenuInput" /> */}
+            <Box>
+        <TextField
+          id="outlined-search"
+          placeholder="Search contacts"
+          size="small"
+          type="search"
+          variant="outlined"
+          inputProps={{ 'aria-label': 'Search Contacts' }}
+          fullWidth
+          // onChange={(e) => dispatch(chatSearch(e.target.value))}
+        />
+      </Box>
+            {conversations.map((c,index) => (
+              <div key={index} onClick={() => handleUserChat(c)}>
                 <Conversation conversation={c} currentUser={userData} />
               </div>
             ))}
           </div>
         </div>
         <div className="chatBox">
+          
           <div className="chatBoxWrapper">
+          <Box
+              display="flex"
+              alignItems="center"
+              p={2}
+              sx={{
+                pt: "8px",
+                pb: "7px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: { xs: "block", md: "block", lg: "none" },
+                  mr: "10px",
+                }}
+              >
+                <FeatherIcon
+                  icon="menu"
+                  width="18"
+                />
+              </Box>
+              <ListItem dense disableGutters>
+                <ListItemAvatar>
+                  <Avatar  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h4">{findChatUser}</Typography>
+                  }
+                  secondary={chatUserOnline ? "online" : "offline"}
+                />
+              </ListItem>
+            </Box>
+            <Divider />
             {currentChat ? (
               <>
                 <div className="chatBoxTop">
-                  {messages.map((m) => (
-                    <div ref={scrollRef}>
+                  {messages.map((m,index) => (
+                    <div key={index} ref={scrollRef}>
                       <Message message={m} own={m.sender === userData._id} />
                     </div>
                   ))}
                 </div>
-                <div className="chatBoxBottom">
-                  <textarea
-                    className="chatMessageInput"
-                    placeholder="write something..."
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    value={newMessage}
-                  ></textarea>
-                  <button className="chatSubmitButton" onClick={handleSubmit}>
-                    Send
-                  </button>
-                </div>
+              <Grid >
+            <form onSubmit={handleSubmit} className="chatBoxBottom">
+            
+              <TextField
+          id="msg-sent"
+          className="chatMessageInput"
+          fullWidth
+          value={newMessage}
+          placeholder="Type a Message"
+          size="small"
+          type="text"
+          variant="outlined"
+          inputProps={{ 'aria-label': 'Type a Message' }}
+          onChange={(e) => setNewMessage(e.target.value)}
+        />
+             
+      
+       <button className="chatSubmitButton" type="submit" >
+       <FeatherIcon icon="send" width="24" />
+        </button>
+     
+            </form>
+                 
+     
+        {/* <TextField
+          id="msg-sent"
+          className="chatMessageInput"
+         
+          value={newMessage}
+          placeholder="Type a Message"
+          size="small"
+          type="text"
+          variant="outlined"
+          inputProps={{ 'aria-label': 'Type a Message' }}
+          onChange={(e) => setNewMessage(e.target.value)}
+        />
+        <IconButton
+          aria-label="delete"
+          className="chatSubmitButton"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={!newMessage}
+        >
+          <FeatherIcon icon="send" width="24" />
+        </IconButton> */}
+    
+    
+                </Grid>
               </>
             ) : (
               <span className="noConversationText">
@@ -212,6 +363,7 @@ export default function Messenger() {
           </div>
         </div>
       </div>
+     </Box>
     </>
   );
 }

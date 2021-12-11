@@ -5,63 +5,30 @@ import { useContext } from "react";
 
 import { LoginContext } from "../../context/LoginProvider";
 import { useHistory } from 'react-router-dom'
+import { Button, Grid, Typography } from "@mui/material";
 
 export default function Topbar() {
   const history = useHistory()
-  // const { userData } = useContext(LoginContext);
+  const { userData } = useContext(LoginContext);
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const handleLogout = () => {
     localStorage.removeItem('token')
-    history.replace('/login')
+    window.location.href = '/login'
+    // history.replace('/login')
 }
   return (
     <div className="topbarContainer">
-      {/* <div className="topbarLeft">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <span className="logo">Lamasocial</span>
-        </Link>
-      </div>
-      <div className="topbarCenter">
-        <div className="searchbar">
-          <Search className="searchIcon" />
-          <input
-            placeholder="Search for friend, post or video"
-            className="searchInput"
-          />
-        </div>
-      </div>
-      <div className="topbarRight">
-        <div className="topbarLinks">
-          <span className="topbarLink">Homepage</span>
-          <span className="topbarLink">Timeline</span>
-        </div>
-        <div className="topbarIcons">
-          <div className="topbarIconItem">
-            <Person />
-            <span className="topbarIconBadge">1</span>
-          </div>
-          <div className="topbarIconItem">
-            <Chat />
-            <span className="topbarIconBadge">2</span>
-          </div>
-          <div className="topbarIconItem">
-            <Notifications />
-            <span className="topbarIconBadge">1</span>
-          </div>
-        </div>
-        <Link to={`/profile/${userData.username}`}>
-          <img
-            src={
-              userData.profilePicture
-                ? PF + userData.profilePicture
-                : PF + "person/noAvatar.png"
-            }
-            alt=""
-            className="topbarImg"
-          />
-        </Link>
-      </div> */}
-      	<button onClick={handleLogout}>Logout</button>
+     <Grid
+  container
+  direction="row"
+  justifyContent="space-around"
+  alignItems="center"
+>
+<Typography style={{color:"white",fontWeight:"bold"}}>{`Account Name : ${userData.username}`}</Typography>
+<Typography style={{color:"white",fontWeight:"bold"}}> Chat App</Typography>
+<Button variant="contained" onClick={handleLogout}>Logout</Button>
+  </Grid>
+      
     </div>
   );
 }
