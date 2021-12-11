@@ -11,14 +11,20 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { LoginContext } from "../../context/LoginProvider";
 import { Avatar, Divider, IconButton, ListItem, ListItemAvatar, ListItemText, TextField, Typography, Grid } from "@mui/material";
-
 import { ChatUserContext } from "../../context/ChatListUserDataProvider";
 import FeatherIcon from "feather-icons-react";
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+
+
 
 export default function Messenger() {
 
   const history = useHistory()
+  const [open, setOpen] = useState(false);
+  const [allUsers,setAllUsers] = useState([])
+
   const { userData,setUserData } = useContext(LoginContext);
   const [onlineMatch,setOnlineMatch] = useState([])
   const [findChatUser,setFindChatUser] = useState()
@@ -201,31 +207,45 @@ export default function Messenger() {
     const data = response.data
     console.log(data)
     setOnlineMatch(data)
-    // const chatOnlineMatch = data?.filter((f) => onlineUsers?.includes(f._id))
-    // console.log(chatOnlineMatch)
-    // const matchData = chatOnlineMatch?.filter(user => user.username === findChatUser)
-    // console.log(matchData)
-    // console.log(matchData.length === 0)
-    // if(matchData.length === 0) {
-    //   setChatUserOnline(false)
-    // }
-    // else {
-    //   setChatUserOnline(true)
-    // }
   })
 .catch((err) => {
   console.log(err)
   })
 
   }
+ 
 
-  console.log(chatUserOnline)
- console.log(findChatUser)
+  const handleOpenUsers = () =>{
+    setOpen(true)
+    axios.get(`http://localhost:8800/api/users/all`)
+    .then((response) => {
+      const data = response.data
+      console.log(data)
+      const withoutCurrentUser = data?.filter(info => info._id !== userData._id)
+      setAllUsers(withoutCurrentUser)
+    })
+  .catch((err) => {
+    console.log(err)
+    })
+  };
+  const handleClose = () => setOpen(false);
+
+  console.log(conversations)
+//  useEffect(() => {
+//   let mData = []
+//   conversations.map(all => {
+//    mData.push(all.members.find(data => data !== userData._id))
+//   })
+//   console.log(mData)
+//   const filterSameData = [...new Set(mData.map(unique => unique))]
+//   console.log(filterSameData)
+  
+//  })
 
   return (
     <>
     {/* <h1>messenger page</h1> */}
-      <Topbar />
+      <Topbar  allUsers={allUsers} conversations={conversations} setConversations={setConversations} handleOpenUsers={handleOpenUsers} handleClose={handleClose}  open ={open}/>
      <Box >
      <div className="messenger">
         <div className="chatMenu">
@@ -247,7 +267,7 @@ export default function Messenger() {
       </Box>
             {conversations.map((c,index) => (
               <div key={index} onClick={() => handleUserChat(c)}>
-                <Conversation conversation={c} currentUser={userData} />
+                <Conversation conversation={c} allConversations={conversations} currentUser={userData} />
               </div>
             ))}
           </div>
