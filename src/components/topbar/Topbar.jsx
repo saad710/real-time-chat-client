@@ -40,14 +40,23 @@ export default function Topbar(props) {
       "senderId" : userData._id,
       "receiverId" : all._id
     }
-    axios.post(`http://localhost:8800/api/conversations`,bothUserId)
+    axios.get(`http://localhost:8800/api/conversations/find/${userData._id}/${all._id}`)
     .then((response) => {
-     console.log(response.data)
-     conversations.push(response.data)
-    })
-  .catch((err) => {
-    console.log(err)
- });
+      console.log(response.data)
+      if(!response.data){
+        axios.post(`http://localhost:8800/api/conversations`,bothUserId)
+        .then((response) => {
+         console.log(response.data)
+         conversations.push(response.data)
+        })
+      .catch((err) => {
+        console.log(err)
+     });
+
+      }
+     })
+    
+  
 //  conversations.push()
     
   }

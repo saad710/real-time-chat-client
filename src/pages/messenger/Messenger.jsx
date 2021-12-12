@@ -231,16 +231,16 @@ export default function Messenger() {
   const handleClose = () => setOpen(false);
 
   console.log(conversations)
-//  useEffect(() => {
-//   let mData = []
-//   conversations.map(all => {
-//    mData.push(all.members.find(data => data !== userData._id))
-//   })
-//   console.log(mData)
-//   const filterSameData = [...new Set(mData.map(unique => unique))]
-//   console.log(filterSameData)
+ useEffect(() => {
+  let mData = []
+  conversations.map(all => {
+   mData.push(all.members.find(data => data !== userData._id))
+  })
+  console.log(mData)
+  const filterSameData = [...new Set(mData.map(unique => unique))]
+  console.log(filterSameData)
   
-//  })
+ })
 
   return (
     <>
