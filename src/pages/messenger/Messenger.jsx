@@ -10,7 +10,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { LoginContext } from "../../context/LoginProvider";
-import { Avatar, Divider, IconButton, ListItem, ListItemAvatar, ListItemText, TextField, Typography, Grid } from "@mui/material";
+import { Avatar, Divider, IconButton, ListItem, ListItemAvatar, ListItemText, TextField, Typography, Grid, Card } from "@mui/material";
 import { ChatUserContext } from "../../context/ChatListUserDataProvider";
 import FeatherIcon from "feather-icons-react";
 import Box from '@mui/material/Box';
@@ -24,6 +24,7 @@ export default function Messenger() {
   const history = useHistory()
   const [open, setOpen] = useState(false);
   const [allUsers,setAllUsers] = useState([])
+  const [activeChat,setActiveChat] = useState(0)
 
   const { userData,setUserData } = useContext(LoginContext);
   const [onlineMatch,setOnlineMatch] = useState([])
@@ -31,7 +32,8 @@ export default function Messenger() {
   const [chatUserOnline,setChatUserOnline] = useState()
  
   const [conversations, setConversations] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
+  console.log(conversations[0])
+  const [currentChat, setCurrentChat] = useState(conversations[0]);
   console.log(currentChat)
   const [messages, setMessages] = useState([]);
   console.log(messages)
@@ -187,7 +189,9 @@ export default function Messenger() {
     }
   },[findChatUser,onlineUsers,onlineMatch])
 
-  const handleUserChat = (c) => {
+
+
+  const handleUserChat = (c,index) => {
     console.log(c)
     setCurrentChat(c)
     const findCurrentChat = c.members.filter(userInfo => userInfo !== userData._id)
@@ -213,6 +217,7 @@ export default function Messenger() {
   })
 
   }
+
  
 
   const handleOpenUsers = () =>{
@@ -242,11 +247,14 @@ export default function Messenger() {
   
  })
 
+ 
+
   return (
     <>
     {/* <h1>messenger page</h1> */}
       <Topbar  allUsers={allUsers} conversations={conversations} setConversations={setConversations} handleOpenUsers={handleOpenUsers} handleClose={handleClose}  open ={open}/>
-     <Box >
+     {/* <Card  style={{backgroundColor:"#03295c",color:'white'}}> */}
+     <Box style={{padding:"3vh",backgroundColor:"#03295c",color:'white'}}>
      <div className="messenger">
         <div className="chatMenu">
        
@@ -262,11 +270,12 @@ export default function Messenger() {
           variant="outlined"
           inputProps={{ 'aria-label': 'Search Contacts' }}
           fullWidth
+          style={{backgroundColor:"white",borderRadius:"5px"}}
           // onChange={(e) => dispatch(chatSearch(e.target.value))}
         />
       </Box>
             {conversations.map((c,index) => (
-              <div key={index} onClick={() => handleUserChat(c)}>
+              <div key={index}  onClick={() => handleUserChat(c,index)}>
                 <Conversation conversation={c} allConversations={conversations} currentUser={userData} />
               </div>
             ))}
@@ -303,7 +312,7 @@ export default function Messenger() {
                   primary={
                     <Typography variant="h4">{findChatUser}</Typography>
                   }
-                  secondary={chatUserOnline ? "online" : "offline"}
+                  secondary={<Typography variant="p">{chatUserOnline ? "online" : "offline"} </Typography>}
                 />
               </ListItem>
             </Box>
@@ -329,6 +338,7 @@ export default function Messenger() {
           size="small"
           type="text"
           variant="outlined"
+          style={{backgroundColor:"white"}}
           inputProps={{ 'aria-label': 'Type a Message' }}
           onChange={(e) => setNewMessage(e.target.value)}
         />
@@ -368,7 +378,7 @@ export default function Messenger() {
               </>
             ) : (
               <span className="noConversationText">
-                Open a conversation to start a chat.
+              
               </span>
             )}
           </div>
@@ -384,6 +394,7 @@ export default function Messenger() {
         </div>
       </div>
      </Box>
+     {/* </Card> */}
     </>
   );
 }

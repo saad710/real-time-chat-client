@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import LoginProvider from './context/LoginProvider';
 import ChatListUserDataProvider  from './context/ChatListUserDataProvider';
 import AuthProvider from './context/AuthProvider';
+import OnlineProvider from './context/onlineProvider';
 
 ReactDOM.render(
   <React.StrictMode>
    <LoginProvider>
      <AuthProvider>
+       <OnlineProvider>
           <App/>
+       </OnlineProvider>
       </AuthProvider>
    </LoginProvider>
   </React.StrictMode>,

@@ -10,6 +10,7 @@ import { Button, Divider, Grid, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import axios from 'axios'
+import { OnlineContext } from '../../context/onlineProvider'
 
 const style = {
   position: 'absolute',
@@ -26,8 +27,9 @@ const style = {
 
 export default function Topbar(props) {
   const { allUsers, handleOpenUsers, handleClose, open,conversations,setConversations } = props
+  const {onlineFriends,setOnlineFriends} = useContext(OnlineContext)
   const history = useHistory()
-  const { userData } = useContext(LoginContext)
+  const { userData ,setUserData} = useContext(LoginContext)
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -52,11 +54,24 @@ export default function Topbar(props) {
       .catch((err) => {
         console.log(err)
      });
+     const userInfo = { "userId" : userData._id}
+     axios.put(`http://localhost:8800/api/users/${all._id}/follow`,userInfo)
+     .then((response) => {
+      console.log(response.data)
+      // const followData = {"username" : all.username,"_id":all._id}
+      // onlineFriends.push(followData)
+      setUserData(userData.map(user => {
+        return {...user, followings : user.followings.push(all._id)}
+      }))
+     })
+   .catch((err) => {
+     console.log(err)
+  });
 
       }
      })
     
-  
+ 
 //  conversations.push()
     
   }
