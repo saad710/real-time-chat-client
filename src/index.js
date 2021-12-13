@@ -7,13 +7,16 @@ import LoginProvider from './context/LoginProvider';
 import ChatListUserDataProvider  from './context/ChatListUserDataProvider';
 import AuthProvider from './context/AuthProvider';
 import OnlineProvider from './context/onlineProvider';
+import ConversationUserProvider from './context/ConversationUsersProvider';
 
 ReactDOM.render(
   <React.StrictMode>
    <LoginProvider>
      <AuthProvider>
        <OnlineProvider>
+         <ConversationUserProvider>
           <App/>
+          </ConversationUserProvider>
        </OnlineProvider>
       </AuthProvider>
    </LoginProvider>

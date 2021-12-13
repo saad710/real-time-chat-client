@@ -1,7 +1,7 @@
 import './topbar.css'
 import { Search, Person, Chat, Notifications } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 
 import { LoginContext } from '../../context/LoginProvider'
@@ -26,55 +26,100 @@ const style = {
 }
 
 export default function Topbar(props) {
-  const { allUsers, handleOpenUsers, handleClose, open,conversations,setConversations } = props
-  const {onlineFriends,setOnlineFriends} = useContext(OnlineContext)
+  const {
+    allUsers,
+    handleOpenUsers,
+    handleClose,
+    open,
+    conversations,
+    setConversations,
+  } = props
+  const [sideUser, setSideUser] = useState([])
+  const [addUser, setAddUser] = useState()
+  console.log(sideUser)
+  const { onlineFriends, setOnlineFriends } = useContext(OnlineContext)
   const history = useHistory()
-  const { userData ,setUserData} = useContext(LoginContext)
+  const { userData, setUserData } = useContext(LoginContext)
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const handleLogout = () => {
     localStorage.removeItem('token')
     window.location.href = '/login'
     // history.replace('/login')
   }
+
+  useEffect(() => {
+    let result = allUsers?.filter(
+      (all) => !sideUser.some((side) => all.username === side.username),
+    )
+    console.log(result)
+    setAddUser(result)
+  }, [allUsers, sideUser])
+
+  useEffect(() => {
+    let combineData = []
+    conversations.map((con) => {
+      const friendId = con.members.find((m) => m !== userData._id)
+      axios
+        .get(`http://localhost:8800/api/users?userId=${friendId}`)
+        .then((response) => {
+          console.log(response.data)
+          combineData.push(response.data)
+          setSideUser(combineData)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+  }, [conversations, userData, setSideUser])
+
   const handleAddContact = (all) => {
+    const filteredItem = addUser.filter((ind) => {
+      return ind._id !== all._id
+    })
+    setAddUser(filteredItem)
     console.log(all)
     const bothUserId = {
-      "senderId" : userData._id,
-      "receiverId" : all._id
+      senderId: userData._id,
+      receiverId: all._id,
     }
-    axios.get(`http://localhost:8800/api/conversations/find/${userData._id}/${all._id}`)
-    .then((response) => {
-      console.log(response.data)
-      if(!response.data){
-        axios.post(`http://localhost:8800/api/conversations`,bothUserId)
-        .then((response) => {
-         console.log(response.data)
-         conversations.push(response.data)
-        })
-      .catch((err) => {
-        console.log(err)
-     });
-     const userInfo = { "userId" : userData._id}
-     axios.put(`http://localhost:8800/api/users/${all._id}/follow`,userInfo)
-     .then((response) => {
-      console.log(response.data)
-      // const followData = {"username" : all.username,"_id":all._id}
-      // onlineFriends.push(followData)
-      setUserData(userData.map(user => {
-        return {...user, followings : user.followings.push(all._id)}
-      }))
-     })
-   .catch((err) => {
-     console.log(err)
-  });
+    axios
+      .get(
+        `http://localhost:8800/api/conversations/find/${userData._id}/${all._id}`,
+      )
+      .then((response) => {
+        console.log(response.data)
+        if (!response.data) {
+          axios
+            .post(`http://localhost:8800/api/conversations`, bothUserId)
+            .then((response) => {
+              console.log(response.data)
+              conversations.push(response.data)
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          const userInfo = { userId: userData._id }
+          axios
+            .put(`http://localhost:8800/api/users/${all._id}/follow`, userInfo)
+            .then((response) => {
+              console.log(response.data)
+              // const followData = {"username" : all.username,"_id":all._id}
+              // onlineFriends.push(followData)
+              setUserData(
+                userData.map((user) => {
+                  return { ...user, followings: user.followings.push(all._id) }
+                }),
+              )
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+        }
+      })
 
-      }
-     })
-    
- 
-//  conversations.push()
-    
+    //  conversations.push()
   }
+
   return (
     <div className="topbarContainer">
       <Grid
@@ -86,12 +131,17 @@ export default function Topbar(props) {
       >
         <Typography style={{ color: 'white', fontWeight: 'bold' }}>
           {' '}
-          <ChatBubbleOutlineIcon style={{ marginTop: '1vh' }} />{' '}
+          <ChatBubbleOutlineIcon style={{ marginTop: '1vh' }} />
         </Typography>
         <Typography
           style={{ color: 'white', fontWeight: 'bold' }}
         >{`Account Name : ${userData.username}`}</Typography>
-        <Button onClick={handleOpenUsers}>Add Contact</Button>
+        <Button
+          onClick={handleOpenUsers}
+          style={{ fontWeight: 'bold', backgroundColor: '#ADD8E6' }}
+        >
+          Add Contact
+        </Button>
         <Button variant="contained" onClick={handleLogout}>
           Logout
         </Button>
@@ -102,7 +152,7 @@ export default function Topbar(props) {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            {allUsers.map((all) => (
+            {addUser?.map((all) => (
               <Grid
                 container
                 direction="row"
@@ -110,11 +160,12 @@ export default function Topbar(props) {
                 alignItems="center"
                 key={all._id}
               >
-                <h4 style={{color:'grey'}}>{all.username}</h4>
+                <h4 style={{ color: 'grey' }}>{all.username}</h4>
                 <Button
-                  variant="contained"
                   onClick={() => handleAddContact(all)}
+                  style={{ fontWeight: 'bold', backgroundColor: '#ADD8E6' }}
                 >
+                  {/* {all.username === "nishat" ? "Added" : "Add"} */}
                   Add
                 </Button>
               </Grid>
