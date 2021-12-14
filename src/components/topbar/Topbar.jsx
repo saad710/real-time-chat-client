@@ -6,7 +6,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 
 import { LoginContext } from '../../context/LoginProvider'
 import { useHistory } from 'react-router-dom'
-import { Button, Divider, Grid, Typography } from '@mui/material'
+import { Avatar, Button, Divider, Grid, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import axios from 'axios'
@@ -176,7 +176,9 @@ export default function Topbar(props) {
                 alignItems="center"
                 key={all._id}
               >
-                <h4 style={{ color: 'grey' }}>{all.username}</h4>
+                 <Avatar/>
+                <p style={{ color: '#ADD8E6',marginRight:"22vh" }}>{all.username}</p>
+               
                 <Button
                   onClick={() => handleAddContact(all)}
                   style={{ fontWeight: 'bold', backgroundColor: '#ADD8E6' }}
