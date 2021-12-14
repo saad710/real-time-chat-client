@@ -243,19 +243,7 @@ export default function Messenger() {
 
   const handleOpenUsers = () => {
     setOpen(true)
-    axios
-      .get(`http://localhost:8800/api/users/all`)
-      .then((response) => {
-        const data = response.data
-        console.log(data)
-        const withoutCurrentUser = data?.filter(
-          (info) => info._id !== userData._id,
-        )
-        setAllUsers(withoutCurrentUser)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  
   }
   const handleClose = () => setOpen(false)
 
@@ -274,7 +262,8 @@ export default function Messenger() {
     <>
       {/* <h1>messenger page</h1> */}
       <Topbar
-        allUsers={allUsers}
+        // allUsers={allUsers}
+        // setAllUsers={setAllUsers}
         conversations={conversations}
         setConversations={setConversations}
         handleOpenUsers={handleOpenUsers}

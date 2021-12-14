@@ -27,13 +27,15 @@ const style = {
 
 export default function Topbar(props) {
   const {
-    allUsers,
+  
     handleOpenUsers,
     handleClose,
     open,
     conversations,
     setConversations,
   } = props
+  
+
   const [sideUser, setSideUser] = useState([])
   const [addUser, setAddUser] = useState()
   console.log(sideUser)
@@ -48,12 +50,26 @@ export default function Topbar(props) {
   }
 
   useEffect(() => {
-    let result = allUsers?.filter(
-      (all) => !sideUser.some((side) => all.username === side.username),
-    )
-    console.log(result)
-    setAddUser(result)
-  }, [allUsers, sideUser])
+    axios
+    .get(`http://localhost:8800/api/users/all`)
+    .then((response) => {
+      const data = response.data
+      console.log(data)
+      const withoutCurrentUser = data?.filter(
+        (info) => info._id !== userData._id,
+      )
+      let result = withoutCurrentUser?.filter(
+        (all) => !sideUser.some((side) => all.username === side.username),
+      )
+      console.log(result)
+      setAddUser(result)
+      // setAllUsers(withoutCurrentUser)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  
+  }, [sideUser,userData])
 
   useEffect(() => {
     let combineData = []
