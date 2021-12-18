@@ -243,7 +243,6 @@ export default function Messenger() {
 
   const handleOpenUsers = () => {
     setOpen(true)
-  
   }
   const handleClose = () => setOpen(false)
 

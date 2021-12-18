@@ -27,14 +27,12 @@ const style = {
 
 export default function Topbar(props) {
   const {
-  
     handleOpenUsers,
     handleClose,
     open,
     conversations,
     setConversations,
   } = props
-  
 
   const [sideUser, setSideUser] = useState([])
   const [addUser, setAddUser] = useState()
@@ -51,25 +49,24 @@ export default function Topbar(props) {
 
   useEffect(() => {
     axios
-    .get(`http://localhost:8800/api/users/all`)
-    .then((response) => {
-      const data = response.data
-      console.log(data)
-      const withoutCurrentUser = data?.filter(
-        (info) => info._id !== userData._id,
-      )
-      let result = withoutCurrentUser?.filter(
-        (all) => !sideUser.some((side) => all.username === side.username),
-      )
-      console.log(result)
-      setAddUser(result)
-      // setAllUsers(withoutCurrentUser)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  
-  }, [sideUser,userData])
+      .get(`http://localhost:8800/api/users/all`)
+      .then((response) => {
+        const data = response.data
+        console.log(data)
+        const withoutCurrentUser = data?.filter(
+          (info) => info._id !== userData._id,
+        )
+        let result = withoutCurrentUser?.filter(
+          (all) => !sideUser.some((side) => all.username === side.username),
+        )
+        console.log(result)
+        setAddUser(result)
+        // setAllUsers(withoutCurrentUser)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [sideUser, userData])
 
   useEffect(() => {
     let combineData = []
@@ -176,9 +173,11 @@ export default function Topbar(props) {
                 alignItems="center"
                 key={all._id}
               >
-                 <Avatar/>
-                <p style={{ color: '#ADD8E6',marginRight:"22vh" }}>{all.username}</p>
-               
+                <Avatar />
+                <p style={{ color: '#ADD8E6', marginRight: '22vh' }}>
+                  {all.username}
+                </p>
+
                 <Button
                   onClick={() => handleAddContact(all)}
                   style={{ fontWeight: 'bold', backgroundColor: '#ADD8E6' }}

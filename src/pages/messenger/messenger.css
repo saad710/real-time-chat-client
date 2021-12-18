@@ -51,8 +51,8 @@
   /* margin-bottom: 6.5vh; */
   border-radius: 0 5px 5px 0;
   cursor: pointer;
-  background-color: #ADD8E6;
-  color:#03295c;
+  background-color: #add8e6;
+  color: #03295c;
 }
 
 .chatOnline {
@@ -83,11 +83,11 @@
     display: none;
   }
 
-  .chatBox{
+  .chatBox {
     flex: 10;
   }
 
-  .chatOnline{
+  .chatOnline {
     flex: 1px;
   }
 }
